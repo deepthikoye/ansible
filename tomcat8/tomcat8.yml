@@ -10,8 +10,8 @@
      - tomcat8-examples
     tomcat_username: admin
     tomcat_password: password
-    war_location: https://my-tf-test-bucket-kinding.s3-us-west-2.amazonaws.com/gameoflife.war
-    war_file_name: gameoflife.war
+    war_location: https://d1232.s3-us-west-2.amazonaws.com/spring-petclinic-2.2.0.BUILD-SNAPSHOT.jar
+    war_file_name: spring-petclinic-2.2.0.BUILD-SNAPSHOT.jar
   tasks: 
   - name: update ubuntu packages & install tomcat8
     template: 
