@@ -1,0 +1,44 @@
+---
+- hosts: all
+  become: yes
+  vars: 
+    xmx_size: 512m
+    max_perm_size: 256m
+    tomcat_additional_packages: 
+     - tomcat8-docs
+     - tomcaat8-admin
+     - tomcat8-examples
+    tomcat_username: admin
+    tomcat_password: password
+    war_location: https://my-tf-test-bucket-kinding.s3-us-west-2.amazonaws.com/gameoflife.war
+    war_file_name: gameoflife.war
+  tasks: 
+  - name: update ubuntu packages & install tomcat8
+    template: 
+      src: templates/tomcat8.j2
+      dest: /etc/default/tomcat8
+    notify:
+     - restart tomcat
+  - name: install additional tomcat packages
+    apt: 
+      name: "{{ item }}"
+      state: present
+    with_item : "{{ tomcat_additional_packages }}"
+  - name: copy tomcat users
+    template: 
+      src: templates/tomcat-users.xml.j2
+      dest: /etc/tomcat8/tomcat-users.xml
+    notify:
+     - restart tomcat8
+  - name: copy game of life war into tomcat
+    get-url: 
+      url: "{{ war_location }}"
+      dest: "/var/lib/tomcat8/webapps/{{ war_file_name }}"
+    notify: 
+     - restart tomcat8
+
+  handlers:
+   - name: restart tomcat8
+     service: 
+       name: tomcat8
+       state: restarted
